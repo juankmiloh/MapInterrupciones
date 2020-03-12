@@ -1,28 +1,43 @@
-<mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #drawer class="sidenav" fixedInViewport
-      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-      [mode]="(isHandset$ | async) ? 'over' : 'side'"
-      [opened]="(isHandset$ | async) === false">
-    <mat-toolbar>Menu</mat-toolbar>
-    <mat-nav-list>
-      <a mat-list-item routerLink="/first-page" routerLinkActive="active">Opción 1</a>
-      <a mat-list-item href="#">Opción 2</a>
-      <a mat-list-item href="#">Opción 3</a>
-    </mat-nav-list>
-  </mat-sidenav>
-  <mat-sidenav-content>
-    <mat-toolbar color="primary">
-      <button
-        type="button"
-        aria-label="Toggle sidenav"
-        mat-icon-button
-        (click)="drawer.toggle()"
-        *ngIf="isHandset$ | async">
-        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-      </button>
-      <span>MAPA INTERRUPCIONES</span>
-    </mat-toolbar>
-    <!-- Add Content Here -->
-    <router-outlet></router-outlet>
-  </mat-sidenav-content>
+<mat-sidenav-container class="sidenav-container" (backdropClick)="close('backdrop')">
+    <mat-sidenav #sidenav class="sidenav" (keydown.escape)="close('escape')" disableClose opened="false">
+        <!-- Content nav lateral -->
+        <mat-toolbar>
+            <div>
+                <img src="../assets/img/logo_sm.jpg" class='imgSmRedonda'>
+            </div>
+            <label style="padding-left: 3%;"><span style="color: #303F9F;">Superservicios</span> CIAD</label>
+            <div style="padding-left: 10%;">
+                <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="close('toggle button')">
+                    <mat-icon aria-label="Side nav toggle icon">keyboard_arrow_left</mat-icon>
+                </button>
+            </div>
+        </mat-toolbar>
+        <mat-divider></mat-divider>
+        <mat-nav-list #opened>
+            <a mat-list-item routerLink="/first-page" routerLinkActive="active" (click)="close('Opción')">
+                <mat-icon aria-label="Side nav toggle icon">map</mat-icon>
+                <span style="padding-left: 3%;">Ir a mapa de interrupciones</span>
+            </a>
+            <a mat-list-item routerLink="#" routerLinkActive="active">
+                <mat-icon aria-label="Side nav toggle icon">map</mat-icon>
+                <span style="padding-left: 3%;">Ir a mapa de PQR's</span>
+            </a>
+        </mat-nav-list>
+        <mat-divider></mat-divider>
+        <div style="padding-top: 5%;">
+            <label style="cursor:pointer; padding-left: 5%; font-weight: 400; text-align: center;">Acerca de Superservicios CIAD</label>
+        </div>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+        <mat-toolbar color="primary">
+            <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="sidenav.open()">
+				<mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+            </button>
+            <span style="padding-left: 1%;">Interrupciones</span>
+            <!-- <p>Closed due to: {{reason}}</p> -->
+        </mat-toolbar>
+        <!-- Add Content Here -->
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
 </mat-sidenav-container>

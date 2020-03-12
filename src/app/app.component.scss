@@ -1,19 +1,25 @@
 .sidenav-container {
     height: 100%;
-  }
-  
-  .sidenav {
-    width: 200px;
-  }
-  
-  .sidenav .mat-toolbar {
-    background: #1A237E;
-    color: white;
-  }
-  
-  .mat-toolbar.mat-primary {
+}
+
+.sidenav {
+    width: 23em;
+}
+
+.sidenav .mat-toolbar {
+    background: white;
+    color: gray;
+}
+
+.mat-toolbar.mat-primary {
     position: sticky;
     top: 0;
     z-index: 1;
-  }
-  
+}
+
+.imgSmRedonda {
+    width: 30px;
+    height: 40px;
+    border-radius: 160px;
+    // border: 1px solid #666;
+}

@@ -9,7 +9,7 @@ import { loadModules } from "esri-loader";
 export class FirstPageComponent implements OnInit, OnDestroy {
 
   // The <div> where we will place the map
-  @ViewChild("mapViewNode", { static: true }) private mapViewEl: ElementRef;
+  @ViewChild('mapViewNode', { static: true }) private mapViewEl: ElementRef;
   view: any;
 
   constructor() {}
@@ -29,7 +29,7 @@ export class FirstPageComponent implements OnInit, OnDestroy {
       // Initialize the MapView
       const mapViewProperties = {
         container: this.mapViewEl.nativeElement,
-        center: [-74.081749, 4.6097102],
+        center: [-74.5, 6.2],
         zoom: 6,
         map: map
       };
