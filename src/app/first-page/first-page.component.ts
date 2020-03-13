@@ -21,7 +21,7 @@ export class FirstPageComponent implements OnInit, OnDestroy {
 
       // Configure the Map
       const mapProperties = {
-        basemap: "streets"
+        basemap: "streets-navigation-vector"
       };
 
       const map = new Map(mapProperties);
