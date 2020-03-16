@@ -25,7 +25,7 @@ export class FirstPageComponent implements OnInit, OnDestroy {
     console.log('Propiedades Mapa: ', this.view.map.layers.items[0].url);
     console.log('Propiedades basemap: ', this.view.map);
     const [CSVLayer, BasemapToggle] = await loadModules(['esri/layers/CSVLayer', 'esri/widgets/BasemapToggle']);
-    const url = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv';
+    const url = 'assets/export_1_std_1_2018.csv';
     const template = {
       title: '{place}',
       content: 'Magnitude {mag} {type} hit {place} on {time}.'
