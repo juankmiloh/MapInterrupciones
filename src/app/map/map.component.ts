@@ -1,6 +1,7 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Inject } from '@angular/core';
 import { loadModules } from 'esri-loader';
 import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import {MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
 
 @Component({
   selector: 'app-map',
@@ -11,18 +12,21 @@ export class MapComponent implements OnInit, OnDestroy {
 
   constructor(private bottomSheet: MatBottomSheet) {}
 
-  zoom = 0;
+  public zoom = 0;
   basemapToggle: any;
 
   // The <div> where we will place the map
   @ViewChild('mapViewNode', { static: true }) private mapViewEl: ElementRef;
-  view: any;
+  public view: any;
 
   openBottomSheet(): void {
-    this.bottomSheet.open(MapOptionsComponent);
+    this.bottomSheet.open(MapOptionsComponent, {
+      data: { names: ['Frodo', 'Bilbo'], zoom: this.zoom, view: this.view },
+    });
   }
 
   async updateMap(value: number) {
+    console.log('valor zoom: ', this.zoom);
     this.zoom = value;
     this.view.zoom = this.zoom;
     this.view.center = [-74.5, 6.2];
@@ -161,10 +165,17 @@ export class MapComponent implements OnInit, OnDestroy {
 
       this.view.ui.add(legend, 'bottom-left'); // Muestra las convenciones del mapa
       this.view.ui.add(search, {position: 'top-right'}); // Muestra el input de busqueda
-      this.view.ui.move(['zoom', this.basemapToggle], 'top-left'); // Mover los botones de zoom a la izquierda
-      this.view.ui.add(track, 'top-left'); // Muestra el boton de MyLocation
-      // this.view.ui.remove([basemapToggle, 'zoom']);
+      
+      
+      // this.view.ui.remove([this.basemapToggle, 'zoom']);
+      
       this.view.ui.add(this.basemapToggle, 'top-right'); // Muestra las opciones del mapa base
+      // this.view.ui.add([this.basemapToggle, 'zoom'], 'top-right'); // Mover los botones de zoom a la izquierda
+
+      this.view.ui.move([ 'zoom' ], 'top-right');
+
+      this.view.ui.add(track, 'top-right'); // Muestra el boton de MyLocation
+      
 
       return this.view;
 
@@ -186,17 +197,87 @@ export class MapComponent implements OnInit, OnDestroy {
 
 }
 
+interface Food {
+  value: string;
+  viewValue: string;
+}
+
 @Component({
   selector: 'app-map-options',
   templateUrl: './map-options/map-options.component.html',
   styleUrls: ['./map-options/map-options.component.scss']
 })
 export class MapOptionsComponent {
-  constructor(private bottomSheetRef: MatBottomSheetRef<MapOptionsComponent>) {}
+  constructor(private bottomSheetRef: MatBottomSheetRef<MapOptionsComponent>, @Inject(MAT_BOTTOM_SHEET_DATA) public data: any) {}
+
+  foods: Food[] = [
+    {value: 'steak-0', viewValue: 'Energía'},
+    {value: 'pizza-1', viewValue: 'Gas'},
+    {value: 'tacos-2', viewValue: 'GLP'}
+  ];
 
   openLink(event: MouseEvent): void {
+    console.log(event);
+
+    // Evento que se ejecuta despues de cerrar el modal
+    this.bottomSheetRef.afterDismissed().subscribe(() => {
+      console.log('Bottom sheet has been dismissed.');
+    });
+
     this.bottomSheetRef.dismiss();
     event.preventDefault();
-    console.log(event);
   }
+
+  async updateMap(value: number) {
+    console.log('datos desde abajo: ', this.data);
+    console.log('valor zoom: ', this.data.zoom);
+    this.data.zoom = value;
+    this.data.view.zoom = this.data.zoom;
+    this.data.view.center = [-74.5, 6.2];
+    this.data.view.map.basemap = 'dark-gray-vector';
+    console.log('Propiedades Mapa: ', this.data.view.map.layers.items[0].url);
+    console.log('Propiedades basemap: ', this.data.view.map);
+    const [CSVLayer, BasemapToggle] = await loadModules(['esri/layers/CSVLayer', 'esri/widgets/BasemapToggle']);
+    const url = 'assets/file_pqrs.csv';
+    const template = {
+      title: '{place}',
+      content: 'Magnitude {mag} {type} hit {place} on {time}.'
+    };
+    const renderer = {
+      type: 'heatmap',
+      // field: 'numero_pqrs',
+      colorStops: [
+        { color: 'rgba(63, 40, 102, 0)', ratio: 0 }, // rango de 0 a 1
+        { color: '#6300df', ratio: 0.083 },          // Azul claro
+        { color: '#002dfe', ratio: 0.100 },          // Azul
+        { color: '#00ff2c', ratio: 0.166 },          // Verde Clarito
+        { color: '#a1ff00', ratio: 0.249 },          // Verde
+        { color: '#e5ff00', ratio: 0.332 },          // Amarillo claro
+        { color: '#fef700', ratio: 0.415 },          // Amarillo
+        { color: '#ffc700', ratio: 0.498 },          // Amarillo oscuro
+        { color: '#fea701', ratio: 0.581 },          // Naranja claro
+        { color: '#ff6400', ratio: 0.664 },          // Naranja
+        { color: '#ff3000', ratio: 1 }               // Rojo
+      ],
+      maxPixelIntensity: 2000,
+      minPixelIntensity: 50
+    };
+    const layer = new CSVLayer({
+      url,
+      title: 'Agregar Título',
+      copyright: 'DESARROLLADO POR JUAN CAMILO HERRERA - CIAD SSPD',
+      popupTemplate: template,
+      renderer
+    });
+    this.data.view.map.layers = layer; // Se agrega un nuevo layer CSV al mapa
+    // this.data.view.ui.remove([this.basemapToggle]);
+    this.data.basemapToggle = new BasemapToggle({view: this.data.view, nextBasemap: 'streets-navigation-vector'});
+    // this.data.view.ui.add(this.basemapToggle, 'top-right'); // Muestra las opciones del mapa base
+    // Evento que se ejecuta despues de cerrar el modal
+    this.bottomSheetRef.afterDismissed().subscribe(() => {
+      console.log('Bottom sheet has been dismissed.');
+    });
+    this.bottomSheetRef.dismiss(); // cerrar modal
+  }
+
 }

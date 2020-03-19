@@ -1,8 +1,10 @@
 <div #mapViewNode style="z-index: 0; position: relative;"></div>
-<div style="border: 1px solid red; z-index: 1; position: absolute; text-align: center; width: 50%; color: red;">
-    <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="updateMap(5)">
+<div style="border: 0px solid red; z-index: 1; position: absolute; text-align: center; width: 5em; padding-top: 1em; padding-left: 0.5em; color: red;">
+    <!-- <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="updateMap(5)">
         <mat-icon aria-label="Side nav toggle icon">settings_overscan</mat-icon>
+    </button> -->
+    <button mat-raised-button (click)="openBottomSheet()">
+        <mat-icon aria-label="Side nav toggle icon">settings</mat-icon>        
     </button>
-    <button mat-raised-button (click)="openBottomSheet()">Open file</button>
     <!-- <p>Closed due to: {{zoom}}</p> -->
 </div>
