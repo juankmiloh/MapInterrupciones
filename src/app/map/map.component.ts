@@ -1,14 +1,15 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { loadModules } from 'esri-loader';
+import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 
 @Component({
-  selector: 'app-first-page',
-  templateUrl: './first-page.component.html',
-  styleUrls: ['./first-page.component.scss']
+  selector: 'app-map',
+  templateUrl: './map.component.html',
+  styleUrls: ['./map.component.scss']
 })
-export class FirstPageComponent implements OnInit, OnDestroy {
+export class MapComponent implements OnInit, OnDestroy {
 
-  constructor() {}
+  constructor(private bottomSheet: MatBottomSheet) {}
 
   zoom = 0;
   basemapToggle: any;
@@ -16,6 +17,10 @@ export class FirstPageComponent implements OnInit, OnDestroy {
   // The <div> where we will place the map
   @ViewChild('mapViewNode', { static: true }) private mapViewEl: ElementRef;
   view: any;
+
+  openBottomSheet(): void {
+    this.bottomSheet.open(MapOptionsComponent);
+  }
 
   async updateMap(value: number) {
     this.zoom = value;
@@ -25,7 +30,7 @@ export class FirstPageComponent implements OnInit, OnDestroy {
     console.log('Propiedades Mapa: ', this.view.map.layers.items[0].url);
     console.log('Propiedades basemap: ', this.view.map);
     const [CSVLayer, BasemapToggle] = await loadModules(['esri/layers/CSVLayer', 'esri/widgets/BasemapToggle']);
-    const url = 'assets/export_1_std_1_2018.csv';
+    const url = 'assets/file_pqrs.csv';
     const template = {
       title: '{place}',
       content: 'Magnitude {mag} {type} hit {place} on {time}.'
@@ -69,7 +74,8 @@ export class FirstPageComponent implements OnInit, OnDestroy {
       const [Track, Map, MapView, CSVLayer, Search, Legend, BasemapToggle, watchUtils] = await loadModules(['esri/widgets/Track', 'esri/Map', 'esri/views/MapView', 'esri/layers/CSVLayer', 'esri/widgets/Search', 'esri/widgets/Legend', 'esri/widgets/BasemapToggle', 'esri/core/watchUtils']);
 
       // const url = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.csv';
-      const url = '';
+      // const url = '';
+      const url = 'assets/2.5_week.csv';
 
       // Paste the url into a browser's address bar to download and view the attributes
       // in the CSV file. These attributes include:
@@ -90,22 +96,23 @@ export class FirstPageComponent implements OnInit, OnDestroy {
 
       const renderer = {
         type: 'heatmap',
-        // field: 'numero_pqrs',
         colorStops: [
-          { color: 'rgba(63, 40, 102, 0)', ratio: 0 }, // rango de 0 a 1
-          { color: '#6300df', ratio: 0.083 },          // Azul claro
-          { color: '#002dfe', ratio: 0.100 },          // Azul
-          { color: '#00ff2c', ratio: 0.166 },          // Verde Clarito
-          { color: '#a1ff00', ratio: 0.249 },          // Verde
-          { color: '#e5ff00', ratio: 0.332 },          // Amarillo claro
-          { color: '#fef700', ratio: 0.415 },          // Amarillo
-          { color: '#ffc700', ratio: 0.498 },          // Amarillo oscuro
-          { color: '#fea701', ratio: 0.581 },          // Naranja claro
-          { color: '#ff6400', ratio: 0.664 },          // Naranja
-          { color: '#ff3000', ratio: 1 }               // Rojo
+          { color: 'rgba(63, 40, 102, 0)', ratio: 0 },
+          { color: '#472b77', ratio: 0.083 },
+          { color: '#4e2d87', ratio: 0.166 },
+          { color: '#563098', ratio: 0.249 },
+          { color: '#5d32a8', ratio: 0.332 },
+          { color: '#6735be', ratio: 0.415 },
+          { color: '#7139d4', ratio: 0.498 },
+          { color: '#7b3ce9', ratio: 0.581 },
+          { color: '#853fff', ratio: 0.664 },
+          { color: '#a46fbf', ratio: 0.747 },
+          { color: '#c29f80', ratio: 0.83 },
+          { color: '#e0cf40', ratio: 0.913 },
+          { color: '#ffff00', ratio: 1 }
         ],
-        maxPixelIntensity: 2000,
-        minPixelIntensity: 50
+        maxPixelIntensity: 25,
+        minPixelIntensity: 0
       };
 
       const layer = new CSVLayer({
@@ -118,7 +125,7 @@ export class FirstPageComponent implements OnInit, OnDestroy {
 
       // Configure the Map
       const mapProperties = {
-        basemap: 'streets-navigation-vector',
+        basemap: 'streets',
         layers: [layer]
       };
 
@@ -177,4 +184,19 @@ export class FirstPageComponent implements OnInit, OnDestroy {
     }
   }
 
+}
+
+@Component({
+  selector: 'app-map-options',
+  templateUrl: './map-options/map-options.component.html',
+  styleUrls: ['./map-options/map-options.component.scss']
+})
+export class MapOptionsComponent {
+  constructor(private bottomSheetRef: MatBottomSheetRef<MapOptionsComponent>) {}
+
+  openLink(event: MouseEvent): void {
+    this.bottomSheetRef.dismiss();
+    event.preventDefault();
+    console.log(event);
+  }
 }
