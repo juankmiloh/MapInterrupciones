@@ -20,6 +20,16 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from '@angular/material/form-field';
 import { MapComponent, MapOptionsComponent } from './map/map.component';
+import { MatFabMenuModule } from '@angular-material-extensions/fab-menu';
+import {MatMenuModule} from '@angular/material/menu';
+import { Angulartics2Module } from 'angulartics2';
+import { MarkdownModule } from 'ngx-markdown';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { HttpClientModule } from '@angular/common/http';
+import { MatCardModule } from '@angular/material/card';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+
 
 @NgModule({
   declarations: [
@@ -45,7 +55,16 @@ import { MapComponent, MapOptionsComponent } from './map/map.component';
     MatFormFieldModule,
     MatSelectModule,
     MatDividerModule,
-    MatBottomSheetModule
+    MatBottomSheetModule,
+    MatFabMenuModule,
+    Angulartics2Module,
+    MarkdownModule,
+    FlexLayoutModule,
+    HttpClientModule,
+    MatCardModule,
+    MatRadioModule,
+    MatSlideToggleModule,
+    MatMenuModule
   ],
   providers: [
     // { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },

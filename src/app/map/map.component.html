@@ -1,10 +1,8 @@
-<div #mapViewNode style="z-index: 0; position: relative;"></div>
-<div style="border: 0px solid red; z-index: 1; position: absolute; text-align: center; width: 5em; padding-top: 1em; padding-left: 0.5em; color: red;">
-    <!-- <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="updateMap(5)">
-        <mat-icon aria-label="Side nav toggle icon">settings_overscan</mat-icon>
-    </button> -->
-    <button mat-raised-button (click)="openBottomSheet()">
-        <mat-icon aria-label="Side nav toggle icon">settings</mat-icon>        
-    </button>
+<div #mapViewNode class="juank-theme">
+    <div [class]="fbback_map" onclick="javascript:watchBackdrop()"></div>
+    <div style="z-index: 100;">
+        <mat-fab-menu class="fix-bottom-right" color="primary" [fabButtons]="fabCountries" direction="top" (click)="showBackdrop()" (onFabMenuItemSelected)="selectedAction($event)">
+        </mat-fab-menu>
+    </div>
     <!-- <p>Closed due to: {{zoom}}</p> -->
 </div>

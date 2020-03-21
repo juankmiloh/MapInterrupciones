@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Inject } from '@an
 import { loadModules } from 'esri-loader';
 import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import {MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
+import {MatFabMenu} from '@angular-material-extensions/fab-menu';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-map',
@@ -10,14 +12,63 @@ import {MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
 })
 export class MapComponent implements OnInit, OnDestroy {
 
-  constructor(private bottomSheet: MatBottomSheet) {}
+  constructor(private bottomSheet: MatBottomSheet, private router: Router) {}
 
+  showButtons = false;
+  show = 1;
+  fbback_map = 'fbback_map_hide';
   public zoom = 0;
   basemapToggle: any;
+
+  fabCountries: MatFabMenu[] = [
+    {
+      id: 1,
+      icon: 'settings',
+      tooltip: 'Configuración',
+      tooltipPosition: 'before'
+    },
+    {
+      id: 2,
+      icon: 'assessment',
+      tooltip: 'Estadísticas',
+      tooltipPosition: 'before'
+    },
+  ];
+
+  fabCountries1: MatFabMenu[] = [];
 
   // The <div> where we will place the map
   @ViewChild('mapViewNode', { static: true }) private mapViewEl: ElementRef;
   public view: any;
+
+  showBackdrop(): void {
+    console.log('showBackdrop');
+    // this.showButtons = true;
+    this.fbback_map = 'fbback_map_show';
+    this.view.popup = null;
+    // this.show = 0;
+  }
+
+  hideBackdrop(): void {
+    console.log('hideBackdrop');
+    this.showButtons = false;
+    this.fbback_map = 'fbback_map_hide';
+    this.show = 1;
+  }
+
+  selectedAction = (event) => {
+    console.log('run event:', event);
+    if (event === 1) {
+      console.log('did it');
+      this.toggleEditMode();
+    }
+  }
+
+  toggleEditMode = () => {
+    console.log('Toggle!');
+    this.openBottomSheet();
+    // this.router.navigate(['/']);
+  }
 
   openBottomSheet(): void {
     this.bottomSheet.open(MapOptionsComponent, {
@@ -163,7 +214,14 @@ export class MapComponent implements OnInit, OnDestroy {
       this.basemapToggle = new BasemapToggle({view: this.view, nextBasemap: 'dark-gray-vector'});
       const track = new Track({view: this.view});
 
-      this.view.ui.add(legend, 'bottom-left'); // Muestra las convenciones del mapa
+      legend.style = {
+        type: 'card',
+        // layout: 'auto'
+      };
+
+      legend.respectLayerVisibility = true;
+
+      this.view.ui.add(legend, {position: 'bottom-left'}); // Muestra las convenciones del mapa
       this.view.ui.add(search, {position: 'top-right'}); // Muestra el input de busqueda
       
       
