@@ -89,19 +89,29 @@ export class MapComponent implements OnInit, OnDestroy {
       console.log('BaseMap', this.fabOptions);
       const basemap = this.view.map.basemap.id;
       if (basemap === 'dark-gray-vector') {
-        this.view.map.basemap = 'streets';
-        this.fabOptions[2].icon = '';
-        this.fabOptions[2].imgUrl = 'assets/img/brightness_3-white-18dp.svg';
-        this.fabOptions[2].tooltip = 'Oscuro';
-        this.fabOptions[2].color = 'warn';
+        this.view.map.basemap = 'streets'; // Cambiar el baseMap a Claro
+        this.changeOptionBtnToDark();
       } else {
-        this.view.map.basemap = 'dark-gray-vector';
-        this.fabOptions[2].icon = 'highlight';
-        this.fabOptions[2].imgUrl = '';
-        this.fabOptions[2].tooltip = 'Claro';
-        delete this.fabOptions[2].color; // Se elimina la propiedad 'color' del objeto con id 3
+        this.view.map.basemap = 'dark-gray-vector'; // Cambiar el baseMap a OScuro
+        this.changeOptionBtnToLight();
       }
     }
+  }
+
+  // Cambiar apariencia del boton de opciones de Basemap a Oscuro
+  changeOptionBtnToDark(): void {
+    this.fabOptions[2].icon = '';
+    this.fabOptions[2].imgUrl = 'assets/img/brightness_3-white-18dp.svg';
+    this.fabOptions[2].tooltip = 'Oscuro';
+    this.fabOptions[2].color = 'warn';
+  }
+
+  // Cambiar apariencia del boton de opciones de Basemap a Claro
+  changeOptionBtnToLight(): void {
+    this.fabOptions[2].icon = 'highlight';
+    this.fabOptions[2].imgUrl = '';
+    this.fabOptions[2].tooltip = 'Claro';
+    delete this.fabOptions[2].color; // Se elimina la propiedad 'color' del objeto con id 3 para dejarlo claro
   }
 
   // Mostrar modal de filtros
@@ -310,11 +320,16 @@ export class MapOptionsComponent {
     event.preventDefault();
   }
 
-  async updateMap(value: number) {
+  // Cambiar apariencia del boton de opciones de Basemap a Claro
+  changeOptionBtnToLight(): void {
     this.data.fabOptions[2].icon = 'highlight';
     this.data.fabOptions[2].imgUrl = '';
     this.data.fabOptions[2].tooltip = 'Claro';
-    delete this.data.fabOptions[2].color; // Se elimina la propiedad 'color' del objeto con id 3
+    delete this.data.fabOptions[2].color; // Se elimina la propiedad 'color' del objeto con id 3 para dejarlo claro
+  }
+
+  async updateMap(value: number) {
+    this.changeOptionBtnToLight();
 
     console.log('datos desde abajo: ', this.data);
     console.log('valor zoom: ', this.data.zoom);
