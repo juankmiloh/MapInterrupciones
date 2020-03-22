@@ -37,10 +37,10 @@ export class MapComponent implements OnInit, OnDestroy {
     },
     {
       id: 3,
-      // imgUrl: 'assets/318476.svg',
-      icon: 'brightness_3', // Oscuro -> brightness_3 Claro -> highlight
+      imgUrl: 'assets/img/brightness_3-white-18dp.svg',
       tooltip: 'Oscuro',
-      tooltipPosition: 'before'
+      tooltipPosition: 'before',
+      color: 'warn'
     },
   ];
 
@@ -82,7 +82,7 @@ export class MapComponent implements OnInit, OnDestroy {
     }
     // Click opcion estadisticas
     if (event === 2) {
-      this.view.map.basemap = 'dark-gray-vector';
+      console.log('Estadisticas!');
     }
     // Click opcion Basemap
     if (event === 3) {
@@ -90,12 +90,16 @@ export class MapComponent implements OnInit, OnDestroy {
       const basemap = this.view.map.basemap.id;
       if (basemap === 'dark-gray-vector') {
         this.view.map.basemap = 'streets';
-        this.fabOptions[2].icon = 'brightness_3';
+        this.fabOptions[2].icon = '';
+        this.fabOptions[2].imgUrl = 'assets/img/brightness_3-white-18dp.svg';
         this.fabOptions[2].tooltip = 'Oscuro';
+        this.fabOptions[2].color = 'warn';
       } else {
         this.view.map.basemap = 'dark-gray-vector';
         this.fabOptions[2].icon = 'highlight';
+        this.fabOptions[2].imgUrl = '';
         this.fabOptions[2].tooltip = 'Claro';
+        delete this.fabOptions[2].color; // Se elimina la propiedad 'color' del objeto con id 3
       }
     }
   }
@@ -104,7 +108,7 @@ export class MapComponent implements OnInit, OnDestroy {
   openBottomSheet(): void {
     this.bottomSheet.open(MapOptionsComponent, {
       // Se pasan valores al modal de filtros
-      data: { zoom: this.zoom, view: this.view },
+      data: { view: this.view, fabOptions: this.fabOptions },
     });
   }
 
@@ -307,6 +311,11 @@ export class MapOptionsComponent {
   }
 
   async updateMap(value: number) {
+    this.data.fabOptions[2].icon = 'highlight';
+    this.data.fabOptions[2].imgUrl = '';
+    this.data.fabOptions[2].tooltip = 'Claro';
+    delete this.data.fabOptions[2].color; // Se elimina la propiedad 'color' del objeto con id 3
+
     console.log('datos desde abajo: ', this.data);
     console.log('valor zoom: ', this.data.zoom);
     this.data.zoom = value;
