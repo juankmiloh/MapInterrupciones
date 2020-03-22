@@ -1,8 +1,5 @@
 <div #mapViewNode class="juank-theme">
-    <div [class]="fbback_map" onclick="javascript:watchBackdrop()"></div>
-    <div style="z-index: 100;">
-        <mat-fab-menu class="fix-bottom-right" color="primary" [fabButtons]="fabCountries" direction="top" (click)="showBackdrop()" (onFabMenuItemSelected)="selectedAction($event)">
-        </mat-fab-menu>
-    </div>
-    <!-- <p>Closed due to: {{zoom}}</p> -->
+    <div class="fbback_map" [class]="fbbackMap" (click)="hideBackdrop()"></div>
+    <mat-fab-menu class="fix-bottom-right" color="primary" [fabButtons]="fabOptions" direction="top" (click)="clickBtnFlotante()" (onFabMenuItemSelected)="selectedAction($event)" [isActive]="isActive">
+    </mat-fab-menu>
 </div>

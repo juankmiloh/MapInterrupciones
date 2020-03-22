@@ -13,7 +13,7 @@ body {
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-// Estilos para el cuadro Legend pantalla web
+// CSS para el cuadro Legend pantalla web
 .juank-theme .esri-legend--card {
     height: 8em;
     width: 15em;
@@ -21,13 +21,13 @@ body {
     overflow-y: hidden;
 }
 
-// Estilos para el cuadro Legend pantalla dispositivo movil
+// CSS para el cuadro Legend pantalla dispositivo movil
 .juank-theme .esri-legend--stacked {
     height: 10em;
     min-width: 3em;
 }
 
-// Estilo para que el bottom-sheet ocupe todo el ancho de la pantalla
+// CSS para que el bottom-sheet ocupe todo el ancho de la pantalla
 .mat-bottom-sheet-container {
     min-width: 100vw !important;
 }

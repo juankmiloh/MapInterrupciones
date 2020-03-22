@@ -14,13 +14,15 @@ export class MapComponent implements OnInit, OnDestroy {
 
   constructor(private bottomSheet: MatBottomSheet, private router: Router) {}
 
-  showButtons = false;
-  show = 1;
-  fbback_map = 'fbback_map_hide';
+  // Controla el CSS del Backdrop
+  fbbackMap = 'fbback_map_hide';
+  isActive = false;
+
   public zoom = 0;
   basemapToggle: any;
 
-  fabCountries: MatFabMenu[] = [
+  // Opciones del boton flotante
+  fabOptions: MatFabMenu[] = [
     {
       id: 1,
       icon: 'settings',
@@ -33,46 +35,76 @@ export class MapComponent implements OnInit, OnDestroy {
       tooltip: 'Estadísticas',
       tooltipPosition: 'before'
     },
+    {
+      id: 3,
+      // imgUrl: 'assets/318476.svg',
+      icon: 'brightness_3', // Oscuro -> brightness_3 Claro -> highlight
+      tooltip: 'Oscuro',
+      tooltipPosition: 'before'
+    },
   ];
-
-  fabCountries1: MatFabMenu[] = [];
 
   // The <div> where we will place the map
   @ViewChild('mapViewNode', { static: true }) private mapViewEl: ElementRef;
   public view: any;
 
-  showBackdrop(): void {
-    console.log('showBackdrop');
-    // this.showButtons = true;
-    this.fbback_map = 'fbback_map_show';
-    this.view.popup = null;
-    // this.show = 0;
-  }
-
-  hideBackdrop(): void {
-    console.log('hideBackdrop');
-    this.showButtons = false;
-    this.fbback_map = 'fbback_map_hide';
-    this.show = 1;
-  }
-
-  selectedAction = (event) => {
-    console.log('run event:', event);
-    if (event === 1) {
-      console.log('did it');
-      this.toggleEditMode();
+  // click boton flotante
+  clickBtnFlotante(): void {
+    if (this.isActive) {
+      this.hideBackdrop();
+    } else {
+      this.showBackdrop();
     }
   }
 
-  toggleEditMode = () => {
-    console.log('Toggle!');
-    this.openBottomSheet();
-    // this.router.navigate(['/']);
+  // Mostrar Backdrop
+  showBackdrop(): void {
+    console.log('showBackdrop');
+    this.fbbackMap = 'fbback_map_show';
+    this.isActive = true;
+    console.log(this.view.popup);
+    this.view.popup.close(); // Se cierran los popups del mapa
   }
 
+  // Ocultar Backdrop
+  hideBackdrop(): void {
+    console.log('hideBackdrop');
+    this.fbbackMap = 'fbback_map_hide';
+    this.isActive = false;
+  }
+
+  // Captura la opcion seleccionada del boton flotante
+  selectedAction = (event: number) => {
+    this.fbbackMap = 'fbback_map_hide';
+    // Click opcion filtros
+    if (event === 1) {
+      this.openBottomSheet();
+    }
+    // Click opcion estadisticas
+    if (event === 2) {
+      this.view.map.basemap = 'dark-gray-vector';
+    }
+    // Click opcion Basemap
+    if (event === 3) {
+      console.log('BaseMap', this.fabOptions);
+      const basemap = this.view.map.basemap.id;
+      if (basemap === 'dark-gray-vector') {
+        this.view.map.basemap = 'streets';
+        this.fabOptions[2].icon = 'brightness_3';
+        this.fabOptions[2].tooltip = 'Oscuro';
+      } else {
+        this.view.map.basemap = 'dark-gray-vector';
+        this.fabOptions[2].icon = 'highlight';
+        this.fabOptions[2].tooltip = 'Claro';
+      }
+    }
+  }
+
+  // Mostrar modal de filtros
   openBottomSheet(): void {
     this.bottomSheet.open(MapOptionsComponent, {
-      data: { names: ['Frodo', 'Bilbo'], zoom: this.zoom, view: this.view },
+      // Se pasan valores al modal de filtros
+      data: { zoom: this.zoom, view: this.view },
     });
   }
 
@@ -122,6 +154,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.view.ui.add(this.basemapToggle, 'top-right'); // Muestra las opciones del mapa base
   }
 
+  // Se carga el mapa
   async initializeMap() {
     try {
       // Load the modules for the ArcGIS API for JavaScript
@@ -214,26 +247,14 @@ export class MapComponent implements OnInit, OnDestroy {
       this.basemapToggle = new BasemapToggle({view: this.view, nextBasemap: 'dark-gray-vector'});
       const track = new Track({view: this.view});
 
-      legend.style = {
-        type: 'card',
-        // layout: 'auto'
-      };
+      legend.style = { type: 'card' }; // CSS leyenda tipo card
 
-      legend.respectLayerVisibility = true;
-
-      this.view.ui.add(legend, {position: 'bottom-left'}); // Muestra las convenciones del mapa
-      this.view.ui.add(search, {position: 'top-right'}); // Muestra el input de busqueda
-      
-      
-      // this.view.ui.remove([this.basemapToggle, 'zoom']);
-      
-      this.view.ui.add(this.basemapToggle, 'top-right'); // Muestra las opciones del mapa base
-      // this.view.ui.add([this.basemapToggle, 'zoom'], 'top-right'); // Mover los botones de zoom a la izquierda
-
-      this.view.ui.move([ 'zoom' ], 'top-right');
-
-      this.view.ui.add(track, 'top-right'); // Muestra el boton de MyLocation
-      
+      this.view.ui.add(legend, {position: 'bottom-left'});  // Muestra las convenciones del mapa
+      this.view.ui.add(search, {position: 'top-right'});    // Muestra el input de busqueda
+      this.view.ui.remove([this.basemapToggle, 'zoom']);    // Elimina los botones de zoom
+      // this.view.ui.add(this.basemapToggle, 'top-right'); // Muestra las opciones del mapa base
+      this.view.ui.add(track, 'top-right');                 // Muestra el boton de MyLocation
+      // this.view.ui.move([ 'zoom' ], 'top-right');        // Mover los botones de zoom a la izquierda
 
       return this.view;
 
@@ -248,8 +269,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.view) {
-      // destroy the map view
-      this.view.container = null;
+      this.view.container = null; // destroy the map view
     }
   }
 
