@@ -1,5 +1,5 @@
-<mat-sidenav-container class="sidenav-container" (backdropClick)="close('backdrop')">
-    <mat-sidenav #sidenav class="sidenav" (keydown.escape)="close('escape')" disableClose opened="false">
+<mat-sidenav-container class="sidenav-container" (backdropClick)="close('na')">
+    <mat-sidenav #sidenav class="sidenav" (keydown.escape)="close('na')" disableClose opened="false">
         <!-- Content nav lateral -->
         <mat-toolbar>
             <div>
@@ -7,21 +7,33 @@
             </div>
             <label style="padding-left: 3%;"><span style="color: #303F9F;">Superservicios</span> CIAD</label>
             <div style="padding-left: 10%;">
-                <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="close('toggle button')">
+                <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="close('na')">
                     <mat-icon aria-label="Side nav toggle icon">keyboard_arrow_left</mat-icon>
                 </button>
             </div>
         </mat-toolbar>
         <mat-divider></mat-divider>
         <mat-nav-list #opened>
-            <a mat-list-item routerLink="/map-page" routerLinkActive="active" (click)="close('Opción')">
-                <mat-icon aria-label="Side nav toggle icon">map</mat-icon>
-                <span style="padding-left: 3%;">Ir a mapa de interrupciones</span>
-            </a>
-            <a mat-list-item routerLink="#" routerLinkActive="active">
-                <mat-icon aria-label="Side nav toggle icon">map</mat-icon>
-                <span style="padding-left: 3%;">Ir a mapa de PQR's</span>
-            </a>
+            <mat-list-item routerLink="/home" (click)="close('CIAD | SUPERSERVICIOS')" [routerLinkActive]="['is-active']">
+                <mat-icon aria-label="Side nav toggle icon">home</mat-icon>
+                <span style="padding-left: 3%;">Principal</span>
+            </mat-list-item>
+            <mat-list-item routerLink="/map-PQRS" (click)="close('Mapa de PQR´s')" [routerLinkActive]="['is-active']">
+                <mat-icon aria-label="Side nav toggle icon">perm_phone_msg</mat-icon>
+                <span style="padding-left: 3%;">Mapa de PQR's</span>
+            </mat-list-item>
+            <mat-list-item routerLink="/map-page" (click)="close('Mapa de interrupciones')" [routerLinkActive]="['is-active']">
+                <mat-icon aria-label="Side nav toggle icon">report_problem</mat-icon>
+                <span style="padding-left: 3%;">Mapa de interrupciones</span>
+            </mat-list-item>
+            <mat-list-item routerLink="/tarifarito" (click)="close('Tarifarito | GRUPO TARIFARIO')" [routerLinkActive]="['is-active']">
+                <mat-icon aria-label="Side nav toggle icon">insert_chart</mat-icon>
+                <span style="padding-left: 3%;">Tarifarito | Grupo Tarifario</span>
+            </mat-list-item>
+            <mat-list-item routerLink="/procesos-DIEG" (click)="close('Procesos DIEG')" [routerLinkActive]="['is-active']">
+                <mat-icon aria-label="Side nav toggle icon">donut_small</mat-icon>
+                <span style="padding-left: 3%;">Procesos DIEG</span>
+            </mat-list-item>
         </mat-nav-list>
         <mat-divider></mat-divider>
         <div style="padding-top: 5%;">
@@ -34,7 +46,7 @@
             <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="sidenav.open()">
 				<mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
             </button>
-            <span style="padding-left: 1%;">Interrupciones</span>
+            <span style="padding-left: 1%;">{{ opcion }}</span>
             <!-- <p>Closed due to: {{reason}}</p> -->
         </mat-toolbar>
         <!-- Add Content Here -->

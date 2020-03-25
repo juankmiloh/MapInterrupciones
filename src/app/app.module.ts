@@ -1,16 +1,16 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, NO_ERRORS_SCHEMA  } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatNativeDateModule} from '@angular/material/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatNativeDateModule } from '@angular/material/core';
 import { LayoutModule } from '@angular/cdk/layout';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -18,10 +18,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
-import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from '@angular/material/form-field';
-import { MapComponent, MapOptionsComponent } from './map/map.component';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { MapComponent, MapOptionsComponent } from './views/map/map.component';
 import { MatFabMenuModule } from '@angular-material-extensions/fab-menu';
-import {MatMenuModule} from '@angular/material/menu';
+import { MatMenuModule } from '@angular/material/menu';
 import { Angulartics2Module } from 'angulartics2';
 import { MarkdownModule } from 'ngx-markdown';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -29,12 +29,22 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { TarifaritoComponent } from './views/tarifarito/tarifarito.component';
+import { ProcesosDIEGComponent } from './views/procesos-dieg/procesos-dieg.component';
+import { MapPQRSComponent } from './views/map-pqrs/map-pqrs.component';
+import { HomeComponent } from './views/home/home.component';
+import { MDBBootstrapModule } from 'angular-bootstrap-md';
 
 @NgModule({
   declarations: [
     AppComponent,
     MapComponent,
-    MapOptionsComponent
+    MapOptionsComponent,
+    TarifaritoComponent,
+    ProcesosDIEGComponent,
+    MapPQRSComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -63,11 +73,16 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatCardModule,
     MatRadioModule,
     MatSlideToggleModule,
-    MatMenuModule
+    MatMenuModule,
+    MatProgressBarModule,
+    MatIconModule,
+    MDBBootstrapModule.forRoot()
   ],
   providers: [
     // { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },
+    MatIconRegistry
   ],
+  schemas: [ NO_ERRORS_SCHEMA ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MapOptionsComponent } from './map-options.component';
+import { MapPQRSComponent } from './map-pqrs.component';
 
-describe('MapOptionsComponent', () => {
-  let component: MapOptionsComponent;
-  let fixture: ComponentFixture<MapOptionsComponent>;
+describe('MapPQRSComponent', () => {
+  let component: MapPQRSComponent;
+  let fixture: ComponentFixture<MapPQRSComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MapOptionsComponent ]
+      declarations: [ MapPQRSComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MapOptionsComponent);
+    fixture = TestBed.createComponent(MapPQRSComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

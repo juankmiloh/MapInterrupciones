@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Inject } from '@angular/core';
-import { loadModules } from 'esri-loader';
+import { setDefaultOptions, loadModules, loadCss } from 'esri-loader';
 import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import {MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
 import {MatFabMenu} from '@angular-material-extensions/fab-menu';
 import { Router } from '@angular/router';
+import { SuiService } from '../../services/sui.service';
 
 @Component({
   selector: 'app-map',
@@ -12,7 +13,10 @@ import { Router } from '@angular/router';
 })
 export class MapComponent implements OnInit, OnDestroy {
 
-  constructor(private bottomSheet: MatBottomSheet, private router: Router) {}
+  constructor(private bottomSheet: MatBottomSheet, private router: Router, private suiService: SuiService) {}
+
+  public suiAnios: any[] = [];
+  errorMessage = '';
 
   // Controla el CSS del Backdrop
   fbbackMap = 'fbback_map_hide';
@@ -38,7 +42,7 @@ export class MapComponent implements OnInit, OnDestroy {
     {
       id: 3,
       imgUrl: 'assets/img/brightness_3-white-18dp.svg',
-      tooltip: 'Oscuro',
+      tooltip: 'Modo Oscuro',
       tooltipPosition: 'before',
       color: 'warn'
     },
@@ -102,15 +106,15 @@ export class MapComponent implements OnInit, OnDestroy {
   changeOptionBtnToDark(): void {
     this.fabOptions[2].icon = '';
     this.fabOptions[2].imgUrl = 'assets/img/brightness_3-white-18dp.svg';
-    this.fabOptions[2].tooltip = 'Oscuro';
+    this.fabOptions[2].tooltip = 'Modo Oscuro';
     this.fabOptions[2].color = 'warn';
   }
 
   // Cambiar apariencia del boton de opciones de Basemap a Claro
   changeOptionBtnToLight(): void {
-    this.fabOptions[2].icon = 'highlight';
+    this.fabOptions[2].icon = 'wb_sunny'; // wb_sunny
     this.fabOptions[2].imgUrl = '';
-    this.fabOptions[2].tooltip = 'Claro';
+    this.fabOptions[2].tooltip = 'Modo Claro';
     delete this.fabOptions[2].color; // Se elimina la propiedad 'color' del objeto con id 3 para dejarlo claro
   }
 
@@ -118,7 +122,7 @@ export class MapComponent implements OnInit, OnDestroy {
   openBottomSheet(): void {
     this.bottomSheet.open(MapOptionsComponent, {
       // Se pasan valores al modal de filtros
-      data: { view: this.view, fabOptions: this.fabOptions },
+      data: { view: this.view, fabOptions: this.fabOptions, suiAnios: this.suiAnios },
     });
   }
 
@@ -170,6 +174,12 @@ export class MapComponent implements OnInit, OnDestroy {
 
   // Se carga el mapa
   async initializeMap() {
+    // this.bottomSheet.open(MapOptionsComponent, {
+    //   // Se pasan valores al modal de filtros
+    //   data: { view: this.view, fabOptions: this.fabOptions },
+    // });
+    setDefaultOptions({ version: '4.12' }); // Se configura la version del API de ARCgis a utilizar
+    loadCss('4.14'); // Se cargan los estilos de la version a utilizar
     try {
       // Load the modules for the ArcGIS API for JavaScript
       // tslint:disable-next-line: max-line-length
@@ -279,6 +289,11 @@ export class MapComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.initializeMap();
+    this.suiService.getAnios().subscribe( anios => {
+      this.suiAnios = anios;
+      console.log(this.suiAnios);
+      }, error => this.errorMessage = error
+    );
   }
 
   ngOnDestroy() {
@@ -289,11 +304,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
 }
 
-interface Food {
-  value: string;
-  viewValue: string;
-}
-
 @Component({
   selector: 'app-map-options',
   templateUrl: './map-options/map-options.component.html',
@@ -302,29 +312,27 @@ interface Food {
 export class MapOptionsComponent {
   constructor(private bottomSheetRef: MatBottomSheetRef<MapOptionsComponent>, @Inject(MAT_BOTTOM_SHEET_DATA) public data: any) {}
 
-  foods: Food[] = [
-    {value: 'steak-0', viewValue: 'Energía'},
-    {value: 'pizza-1', viewValue: 'Gas'},
-    {value: 'tacos-2', viewValue: 'GLP'}
+  suiAnios: any[] = this.data.suiAnios;
+
+  servicios: any[] = [
+    {value: 'energia', viewValue: 'Energía'},
+    {value: 'gas', viewValue: 'Gas'},
+    {value: 'glp', viewValue: 'GLP'}
   ];
 
-  openLink(event: MouseEvent): void {
-    console.log(event);
+  errorMessage = '';
 
-    // Evento que se ejecuta despues de cerrar el modal
-    this.bottomSheetRef.afterDismissed().subscribe(() => {
-      console.log('Bottom sheet has been dismissed.');
-    });
+  selectAnio = 2018; // Valor que actualiza el select
 
-    this.bottomSheetRef.dismiss();
-    event.preventDefault();
+  somethingChanged(select: any): void {
+    console.log(select);
   }
 
   // Cambiar apariencia del boton de opciones de Basemap a Claro
   changeOptionBtnToLight(): void {
-    this.data.fabOptions[2].icon = 'highlight';
+    this.data.fabOptions[2].icon = 'wb_sunny';
     this.data.fabOptions[2].imgUrl = '';
-    this.data.fabOptions[2].tooltip = 'Claro';
+    this.data.fabOptions[2].tooltip = 'Modo Claro';
     delete this.data.fabOptions[2].color; // Se elimina la propiedad 'color' del objeto con id 3 para dejarlo claro
   }
 

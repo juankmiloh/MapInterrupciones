@@ -15,11 +15,14 @@ export class AppComponent {
 
   @ViewChild('sidenav') sidenav: MatSidenav;
 
-  reason = '';
+  opcion = 'CIAD | SUPERSERVICIOS';
 
   close(reason: string) {
-    this.reason = reason;
-    this.sidenav.close();
+    if (reason !== 'na') {
+      this.opcion = reason;
+      this.sidenav.close();
+    } else {
+      this.sidenav.close();
+    }
   }
-
 }

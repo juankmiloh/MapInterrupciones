@@ -43,4 +43,10 @@ body {
 // CSS para que el bottom-sheet ocupe todo el ancho de la pantalla
 .mat-bottom-sheet-container {
     min-width: 100vw !important;
+    padding: 0px !important;
+}
+
+// CSS propiedad para poner encima el popup sobre el boton flotante
+.juank-theme .esri-ui {
+    position: static;
 }
