@@ -5,6 +5,9 @@ import {MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
 import {MatFabMenu} from '@angular-material-extensions/fab-menu';
 import { Router } from '@angular/router';
 import { SuiService } from '../../services/sui.service';
+import { MapOptionsComponent } from './map-options/map-options.component';
+import { ThemePalette } from '@angular/material/core';
+import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-map',
@@ -18,8 +21,13 @@ export class MapComponent implements OnInit, OnDestroy {
   public suiAnios: any[] = [];
   errorMessage = '';
 
+  color: ThemePalette = 'primary';
+  mode: ProgressSpinnerMode = 'determinate';
+  value = 50;
+
   // Controla el CSS del Backdrop
   fbbackMap = 'fbback_map_hide';
+  fbbackMapLoad = 'fbback_map_show';
   isActive = false;
 
   public zoom = 0;
@@ -64,7 +72,8 @@ export class MapComponent implements OnInit, OnDestroy {
   // Mostrar Backdrop
   showBackdrop(): void {
     console.log('showBackdrop');
-    this.fbbackMap = 'fbback_map_show';
+    this.fbbackMap = 'fbback_map_show_load';
+    this.fbbackMapLoad = 'fbback_map_hide';
     this.isActive = true;
     console.log(this.view.popup);
     this.view.popup.close(); // Se cierran los popups del mapa
@@ -161,7 +170,7 @@ export class MapComponent implements OnInit, OnDestroy {
     };
     const layer = new CSVLayer({
       url,
-      title: 'Agregar Título',
+      title: 'Interrupciones',
       copyright: 'DESARROLLADO POR JUAN CAMILO HERRERA - CIAD SSPD',
       popupTemplate: template,
       renderer
@@ -229,8 +238,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
       const layer = new CSVLayer({
         url,
-        title: 'Agregar Título',
-        copyright: 'DESARROLLADO POR JUAN CAMILO HERRERA - CIAD SSPD',
+        title: 'Interrupciones',
+        copyright: 'DESARROLLADO POR JUAN CAMILO HERRERA - CIAD SUPERSERVICIOS',
         popupTemplate: template,
         renderer
       });
@@ -256,12 +265,15 @@ export class MapComponent implements OnInit, OnDestroy {
       // Display the loading indicator when the view is updating
       watchUtils.whenTrue(this.view, 'updating', (evt: any) => {
         // showLoad();
+        this.fbbackMap = 'fbback_map_show_load';
+        this.fbbackMapLoad = 'fbback_map_show';
         console.log('showLoad', evt);
         console.log('showCoordenadas', this.view.center);
       });
 
       // Hide the loading indicator when the view stops updating
       watchUtils.whenFalse(this.view, 'updating', (evt: any) => {
+        this.fbbackMap = 'fbback_map_hide';
         console.log('closeLoad', evt);
         console.log('closeCoordenadas', this.view.center); // guardar estas coordenadas en localStorage para cuando se haga una busqueda se actualice el mapa en las mismas coordenadas
       });
@@ -294,100 +306,14 @@ export class MapComponent implements OnInit, OnDestroy {
       console.log(this.suiAnios);
       }, error => this.errorMessage = error
     );
+    const date = new Date();
+    // console.log(moment(date).format('YYYY-MM-DD'));
   }
 
   ngOnDestroy() {
     if (this.view) {
       this.view.container = null; // destroy the map view
     }
-  }
-
-}
-
-@Component({
-  selector: 'app-map-options',
-  templateUrl: './map-options/map-options.component.html',
-  styleUrls: ['./map-options/map-options.component.scss']
-})
-export class MapOptionsComponent {
-  constructor(private bottomSheetRef: MatBottomSheetRef<MapOptionsComponent>, @Inject(MAT_BOTTOM_SHEET_DATA) public data: any) {}
-
-  suiAnios: any[] = this.data.suiAnios;
-
-  servicios: any[] = [
-    {value: 'energia', viewValue: 'Energía'},
-    {value: 'gas', viewValue: 'Gas'},
-    {value: 'glp', viewValue: 'GLP'}
-  ];
-
-  errorMessage = '';
-
-  selectAnio = 2018; // Valor que actualiza el select
-
-  somethingChanged(select: any): void {
-    console.log(select);
-  }
-
-  // Cambiar apariencia del boton de opciones de Basemap a Claro
-  changeOptionBtnToLight(): void {
-    this.data.fabOptions[2].icon = 'wb_sunny';
-    this.data.fabOptions[2].imgUrl = '';
-    this.data.fabOptions[2].tooltip = 'Modo Claro';
-    delete this.data.fabOptions[2].color; // Se elimina la propiedad 'color' del objeto con id 3 para dejarlo claro
-  }
-
-  async updateMap(value: number) {
-    this.changeOptionBtnToLight();
-
-    console.log('datos desde abajo: ', this.data);
-    console.log('valor zoom: ', this.data.zoom);
-    this.data.zoom = value;
-    this.data.view.zoom = this.data.zoom;
-    this.data.view.center = [-74.5, 6.2];
-    this.data.view.map.basemap = 'dark-gray-vector';
-    console.log('Propiedades Mapa: ', this.data.view.map.layers.items[0].url);
-    console.log('Propiedades basemap: ', this.data.view.map);
-    const [CSVLayer, BasemapToggle] = await loadModules(['esri/layers/CSVLayer', 'esri/widgets/BasemapToggle']);
-    const url = 'assets/file_pqrs.csv';
-    const template = {
-      title: '{place}',
-      content: 'Magnitude {mag} {type} hit {place} on {time}.'
-    };
-    const renderer = {
-      type: 'heatmap',
-      // field: 'numero_pqrs',
-      colorStops: [
-        { color: 'rgba(63, 40, 102, 0)', ratio: 0 }, // rango de 0 a 1
-        { color: '#6300df', ratio: 0.083 },          // Azul claro
-        { color: '#002dfe', ratio: 0.100 },          // Azul
-        { color: '#00ff2c', ratio: 0.166 },          // Verde Clarito
-        { color: '#a1ff00', ratio: 0.249 },          // Verde
-        { color: '#e5ff00', ratio: 0.332 },          // Amarillo claro
-        { color: '#fef700', ratio: 0.415 },          // Amarillo
-        { color: '#ffc700', ratio: 0.498 },          // Amarillo oscuro
-        { color: '#fea701', ratio: 0.581 },          // Naranja claro
-        { color: '#ff6400', ratio: 0.664 },          // Naranja
-        { color: '#ff3000', ratio: 1 }               // Rojo
-      ],
-      maxPixelIntensity: 2000,
-      minPixelIntensity: 50
-    };
-    const layer = new CSVLayer({
-      url,
-      title: 'Agregar Título',
-      copyright: 'DESARROLLADO POR JUAN CAMILO HERRERA - CIAD SSPD',
-      popupTemplate: template,
-      renderer
-    });
-    this.data.view.map.layers = layer; // Se agrega un nuevo layer CSV al mapa
-    // this.data.view.ui.remove([this.basemapToggle]);
-    this.data.basemapToggle = new BasemapToggle({view: this.data.view, nextBasemap: 'streets-navigation-vector'});
-    // this.data.view.ui.add(this.basemapToggle, 'top-right'); // Muestra las opciones del mapa base
-    // Evento que se ejecuta despues de cerrar el modal
-    this.bottomSheetRef.afterDismissed().subscribe(() => {
-      console.log('Bottom sheet has been dismissed.');
-    });
-    this.bottomSheetRef.dismiss(); // cerrar modal
   }
 
 }

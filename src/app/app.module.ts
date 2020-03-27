@@ -19,7 +19,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
-import { MapComponent, MapOptionsComponent } from './views/map/map.component';
+import { MapComponent } from './views/map/map.component';
+import { MapOptionsComponent } from './views/map/map-options/map-options.component';
 import { MatFabMenuModule } from '@angular-material-extensions/fab-menu';
 import { MatMenuModule } from '@angular/material/menu';
 import { Angulartics2Module } from 'angulartics2';
@@ -35,6 +36,10 @@ import { ProcesosDIEGComponent } from './views/procesos-dieg/procesos-dieg.compo
 import { MapPQRSComponent } from './views/map-pqrs/map-pqrs.component';
 import { HomeComponent } from './views/home/home.component';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 
 @NgModule({
   declarations: [
@@ -76,6 +81,9 @@ import { MDBBootstrapModule } from 'angular-bootstrap-md';
     MatMenuModule,
     MatProgressBarModule,
     MatIconModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatProgressSpinnerModule,
     MDBBootstrapModule.forRoot()
   ],
   providers: [

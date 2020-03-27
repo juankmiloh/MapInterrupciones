@@ -11,7 +11,7 @@ export class SuiService {
 
   constructor(public http: HttpClient) { }
 
-  serverUrl = 'http://192.168.1.60:5055';
+  serverUrl = 'http://192.168.1.67:5055';
 
   getAnios(): Observable<any[]> {
     return this.http.get<any[]>(`${this.serverUrl}/anios`).pipe(

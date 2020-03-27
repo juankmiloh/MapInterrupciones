@@ -15,7 +15,7 @@ export class AppComponent {
 
   @ViewChild('sidenav') sidenav: MatSidenav;
 
-  opcion = 'CIAD | SUPERSERVICIOS';
+  opcion = 'CIAD | Superservicios';
 
   close(reason: string) {
     if (reason !== 'na') {

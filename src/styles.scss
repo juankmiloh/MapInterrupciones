@@ -50,3 +50,15 @@ body {
 .juank-theme .esri-ui {
     position: static;
 }
+
+mat-calendar-header {
+    display: none;
+}
+
+mat-datepicker-content {
+    overflow: hidden !important;
+}
+
+.mat-datepicker-content-touch {
+    height: 16.5em !important;
+}
