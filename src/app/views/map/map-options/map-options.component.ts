@@ -1,11 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import { loadModules } from 'esri-loader';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
-import {MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
-import {FormControl} from '@angular/forms';
-import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
-import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
-import {MatDatepicker} from '@angular/material/datepicker';
+import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
+import { FormControl } from '@angular/forms';
+import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatDatepicker } from '@angular/material/datepicker';
 
 import * as moment from 'moment';
 import { Moment } from 'moment';
@@ -28,9 +28,6 @@ export const MY_FORMATS = {
   styleUrls: ['./map-options.component.scss'],
   providers: [
     {provide: MAT_DATE_LOCALE, useValue: 'es-ES'}, // Permite ver el calendario en español
-    // `MomentDateAdapter` can be automatically provided by importing `MomentDateModule` in your
-    // application's root module. We provide it at the component level here, due to limitations of
-    // our example generation script.
     {
       provide: DateAdapter,
       useClass: MomentDateAdapter,
@@ -83,18 +80,16 @@ export class MapOptionsComponent {
     delete this.data.fabOptions[2].color; // Se elimina la propiedad 'color' del objeto con id 3 para dejarlo claro
   }
 
-  async updateMap(value: number) {
-    this.changeOptionBtnToLight();
+  async updateMap() {
+    // this.changeOptionBtnToLight();
 
     console.log('datos desde abajo: ', this.data);
-    console.log('valor zoom: ', this.data.zoom);
-    this.data.zoom = value;
-    this.data.view.zoom = this.data.zoom;
-    this.data.view.center = [-74.5, 6.2];
-    this.data.view.map.basemap = 'dark-gray-vector';
-    console.log('Propiedades Mapa: ', this.data.view.map.layers.items[0].url);
+    console.log('valor zoom: ', this.data.view.zoom);
+    // this.data.view.zoom = this.data.zoom;
+    // this.data.view.center = [this.data.view.center.longitude, this.data.view.center.latitude];
+    console.log('Propiedades Mapa Despues: ', this.data.view.map.layers.items[0].url);
     console.log('Propiedades basemap: ', this.data.view.map);
-    const [CSVLayer, BasemapToggle] = await loadModules(['esri/layers/CSVLayer', 'esri/widgets/BasemapToggle']);
+    const [CSVLayer] = await loadModules(['esri/layers/CSVLayer']);
     const url = 'assets/file_pqrs.csv';
     const template = {
       title: '{place}',
@@ -127,14 +122,7 @@ export class MapOptionsComponent {
       renderer
     });
     this.data.view.map.layers = layer; // Se agrega un nuevo layer CSV al mapa
-    // this.data.view.ui.remove([this.basemapToggle]);
-    this.data.basemapToggle = new BasemapToggle({view: this.data.view, nextBasemap: 'streets-navigation-vector'});
-    // this.data.view.ui.add(this.basemapToggle, 'top-right'); // Muestra las opciones del mapa base
-    // Evento que se ejecuta despues de cerrar el modal
-    this.bottomSheetRef.afterDismissed().subscribe(() => {
-      console.log('Bottom sheet has been dismissed.');
-    });
-    this.bottomSheetRef.dismiss(); // cerrar modal
+    this.bottomSheetRef.dismiss(this.data); // cerrar modal y pasar datos a la vista padre
   }
 
 }

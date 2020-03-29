@@ -30,7 +30,7 @@ mat-fab-menu.fix-bottom-right {
 }
 
 // CSS Backdrop activo
-.fbback_map_show_load {
+.fbback_map_init {
     display: block;
     border: 0px solid red;
     width: 100%;
@@ -44,12 +44,13 @@ mat-fab-menu.fix-bottom-right {
     text-align: center;
     display: flex;
     justify-content: center;
-    align-items: center;
+    // align-items: center;
+    padding-top: 15em;
     // background-color: #e8eaf6;
 }
 
 // CSS Backdrop activo
-.fbback_map_show {
+.fbback_map_show_load {
     display: block;
     // background-color: #e8eaf6;
 }

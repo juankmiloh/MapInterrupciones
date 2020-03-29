@@ -1,9 +1,7 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Inject, Input } from '@angular/core';
 import { setDefaultOptions, loadModules, loadCss } from 'esri-loader';
 import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
-import {MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
-import {MatFabMenu} from '@angular-material-extensions/fab-menu';
-import { Router } from '@angular/router';
+import { MatFabMenu } from '@angular-material-extensions/fab-menu';
 import { SuiService } from '../../services/sui.service';
 import { MapOptionsComponent } from './map-options/map-options.component';
 import { ThemePalette } from '@angular/material/core';
@@ -16,24 +14,26 @@ import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 })
 export class MapComponent implements OnInit, OnDestroy {
 
-  constructor(private bottomSheet: MatBottomSheet, private router: Router, private suiService: SuiService) {}
+  constructor(private bottomSheet: MatBottomSheet, private suiService: SuiService) {}
+
+  // The <div> where we will place the map
+  @ViewChild('mapViewNode', { static: true }) private mapViewEl: ElementRef;
+  public view: any;
 
   public suiAnios: any[] = [];
   errorMessage = '';
 
-  color: ThemePalette = 'primary';
+  // opciones del progress de carga
   mode: ProgressSpinnerMode = 'determinate';
   value = 50;
 
   // Controla el CSS del Backdrop
   fbbackMap = 'fbback_map_hide';
-  fbbackMapLoad = 'fbback_map_show';
-  isActive = false;
-
-  public zoom = 0;
-  basemapToggle: any;
+  fbbackMapLoad = 'fbback_map_show_load';
 
   // Opciones del boton flotante
+  isActive = false;
+  color: ThemePalette = 'primary';
   fabOptions: MatFabMenu[] = [
     {
       id: 1,
@@ -56,34 +56,48 @@ export class MapComponent implements OnInit, OnDestroy {
     },
   ];
 
-  // The <div> where we will place the map
-  @ViewChild('mapViewNode', { static: true }) private mapViewEl: ElementRef;
-  public view: any;
+  // Permite controlar el backdrop cuando se cambia el CSV
+  updateLayerCSV = true;
+
+  async ngOnInit() {
+    // Initialize MapView and return an instance of MapView
+    await this.initializeMap().then(mapView => {});
+    this.loadSuiAnios();
+    // this.bottomSheet.open(MapOptionsComponent, {
+    //   // Se pasan valores al modal de filtros
+    //   data: { view: this.view, fabOptions: this.fabOptions },
+    // });
+  }
+
+  ngOnDestroy() {
+    if (this.view) {
+      this.view.container = null; // destroy the map view
+    }
+  }
 
   // click boton flotante
   clickBtnFlotante(): void {
     if (this.isActive) {
       this.hideBackdrop();
     } else {
-      this.showBackdrop();
+      this.showBackdrop('fbback_map_hide');
+      this.isActive = true; // Se cambia la propiedad del btn flotante
     }
   }
 
   // Mostrar Backdrop
-  showBackdrop(): void {
-    console.log('showBackdrop');
-    this.fbbackMap = 'fbback_map_show_load';
-    this.fbbackMapLoad = 'fbback_map_hide';
-    this.isActive = true;
-    console.log(this.view.popup);
+  showBackdrop(cssLoad: string): void {
+    // console.log('showBackdrop');
+    this.fbbackMap = 'fbback_map_init';
+    this.fbbackMapLoad = cssLoad;
     this.view.popup.close(); // Se cierran los popups del mapa
   }
 
   // Ocultar Backdrop
   hideBackdrop(): void {
-    console.log('hideBackdrop');
+    // console.log('hideBackdrop');
     this.fbbackMap = 'fbback_map_hide';
-    this.isActive = false;
+    this.isActive = false; // Se cambia la propiedad del btn flotante
   }
 
   // Captura la opcion seleccionada del boton flotante
@@ -101,11 +115,11 @@ export class MapComponent implements OnInit, OnDestroy {
     if (event === 3) {
       console.log('BaseMap', this.fabOptions);
       const basemap = this.view.map.basemap.id;
-      if (basemap === 'dark-gray-vector') {
-        this.view.map.basemap = 'streets'; // Cambiar el baseMap a Claro
+      if (basemap === 'streets-night-vector') {
+        this.view.map.basemap = 'streets-navigation-vector'; // Cambiar el baseMap a Claro
         this.changeOptionBtnToDark();
       } else {
-        this.view.map.basemap = 'dark-gray-vector'; // Cambiar el baseMap a OScuro
+        this.view.map.basemap = 'streets-night-vector'; // Cambiar el baseMap a Oscuro
         this.changeOptionBtnToLight();
       }
     }
@@ -121,7 +135,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   // Cambiar apariencia del boton de opciones de Basemap a Claro
   changeOptionBtnToLight(): void {
-    this.fabOptions[2].icon = 'wb_sunny'; // wb_sunny
+    this.fabOptions[2].icon = 'wb_sunny';
     this.fabOptions[2].imgUrl = '';
     this.fabOptions[2].tooltip = 'Modo Claro';
     delete this.fabOptions[2].color; // Se elimina la propiedad 'color' del objeto con id 3 para dejarlo claro
@@ -129,66 +143,40 @@ export class MapComponent implements OnInit, OnDestroy {
 
   // Mostrar modal de filtros
   openBottomSheet(): void {
-    this.bottomSheet.open(MapOptionsComponent, {
+    const bottomSheetRef = this.bottomSheet.open(MapOptionsComponent, {
       // Se pasan valores al modal de filtros
-      data: { view: this.view, fabOptions: this.fabOptions, suiAnios: this.suiAnios },
+      data:
+        {
+          view: this.view,
+          fabOptions: this.fabOptions,
+          suiAnios: this.suiAnios,
+          updateLayerCSV: this.updateLayerCSV
+        },
     });
-  }
 
-  async updateMap(value: number) {
-    console.log('valor zoom: ', this.zoom);
-    this.zoom = value;
-    this.view.zoom = this.zoom;
-    this.view.center = [-74.5, 6.2];
-    this.view.map.basemap = 'dark-gray-vector';
-    console.log('Propiedades Mapa: ', this.view.map.layers.items[0].url);
-    console.log('Propiedades basemap: ', this.view.map);
-    const [CSVLayer, BasemapToggle] = await loadModules(['esri/layers/CSVLayer', 'esri/widgets/BasemapToggle']);
-    const url = 'assets/file_pqrs.csv';
-    const template = {
-      title: '{place}',
-      content: 'Magnitude {mag} {type} hit {place} on {time}.'
-    };
-    const renderer = {
-      type: 'heatmap',
-      // field: 'numero_pqrs',
-      colorStops: [
-        { color: 'rgba(63, 40, 102, 0)', ratio: 0 }, // rango de 0 a 1
-        { color: '#6300df', ratio: 0.083 },          // Azul claro
-        { color: '#002dfe', ratio: 0.100 },          // Azul
-        { color: '#00ff2c', ratio: 0.166 },          // Verde Clarito
-        { color: '#a1ff00', ratio: 0.249 },          // Verde
-        { color: '#e5ff00', ratio: 0.332 },          // Amarillo claro
-        { color: '#fef700', ratio: 0.415 },          // Amarillo
-        { color: '#ffc700', ratio: 0.498 },          // Amarillo oscuro
-        { color: '#fea701', ratio: 0.581 },          // Naranja claro
-        { color: '#ff6400', ratio: 0.664 },          // Naranja
-        { color: '#ff3000', ratio: 1 }               // Rojo
-      ],
-      maxPixelIntensity: 2000,
-      minPixelIntensity: 50
-    };
-    const layer = new CSVLayer({
-      url,
-      title: 'Interrupciones',
-      copyright: 'DESARROLLADO POR JUAN CAMILO HERRERA - CIAD SSPD',
-      popupTemplate: template,
-      renderer
+    // subscribe to observable que se ejecuta una vez se abre el modal
+    bottomSheetRef.afterOpened().subscribe(() => {
+      this.updateLayerCSV = true;
     });
-    this.view.map.layers = layer; // Se agrega un nuevo layer CSV al mapa
-    this.view.ui.remove([this.basemapToggle]);
-    this.basemapToggle = new BasemapToggle({view: this.view, nextBasemap: 'streets-navigation-vector'});
-    this.view.ui.add(this.basemapToggle, 'top-right'); // Muestra las opciones del mapa base
+
+    // subscribe to observable que se ejecuta despues de cerrar el modal, obtiene los valores del hijo
+    bottomSheetRef.afterDismissed().subscribe((dataFromChild) => {
+      // console.log('valores enviados del hijo', dataFromChild);
+    });
+
+    // subscribe to observable que se ejecuta cuando se da click al backdrop del modal
+    bottomSheetRef.backdropClick().subscribe((evt) => {
+      this.updateLayerCSV = false;
+    });
   }
 
   // Se carga el mapa
   async initializeMap() {
-    // this.bottomSheet.open(MapOptionsComponent, {
-    //   // Se pasan valores al modal de filtros
-    //   data: { view: this.view, fabOptions: this.fabOptions },
-    // });
     setDefaultOptions({ version: '4.12' }); // Se configura la version del API de ARCgis a utilizar
     loadCss('4.14'); // Se cargan los estilos de la version a utilizar
+
+    sessionStorage.setItem('updateMapLayer', 'true');
+
     try {
       // Load the modules for the ArcGIS API for JavaScript
       // tslint:disable-next-line: max-line-length
@@ -246,7 +234,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
       // Configure the Map
       const mapProperties = {
-        basemap: 'streets',
+        basemap: 'streets-navigation-vector',
         layers: [layer]
       };
 
@@ -255,42 +243,49 @@ export class MapComponent implements OnInit, OnDestroy {
       // Initialize the MapView
       const mapViewProperties = {
         container: this.mapViewEl.nativeElement,
-        center: [-74.5, 4.5], // [horizontal (long), vertical (lat)]
+        center: [-73.47106040285713, 2.5], // [horizontal (long), vertical (lat)]
         zoom: 4,
+        constraints: {
+          minZoom: 3,
+          maxZoom: 19,
+          snapToZoom: true
+         },
         map
       };
 
       this.view = new MapView(mapViewProperties);
 
+      // Mostrar backDrop de carga mientras se inicia la vista
+      watchUtils.whenOnce(this.view, 'ready').then(() => {
+        this.showBackdrop('fbback_map_show_load');
+      });
+
       // Display the loading indicator when the view is updating
       watchUtils.whenTrue(this.view, 'updating', (evt: any) => {
-        // showLoad();
-        this.fbbackMap = 'fbback_map_show_load';
-        this.fbbackMapLoad = 'fbback_map_show';
-        console.log('showLoad', evt);
-        console.log('showCoordenadas', this.view.center);
+        // console.log('showLoad', evt);
+        if (this.updateLayerCSV) {
+          this.showBackdrop('fbback_map_show_load');
+        }
       });
 
       // Hide the loading indicator when the view stops updating
       watchUtils.whenFalse(this.view, 'updating', (evt: any) => {
+        // console.log('closeLoad', evt);
+        this.updateLayerCSV = false;
         this.fbbackMap = 'fbback_map_hide';
-        console.log('closeLoad', evt);
-        console.log('closeCoordenadas', this.view.center); // guardar estas coordenadas en localStorage para cuando se haga una busqueda se actualice el mapa en las mismas coordenadas
       });
 
-      const legend = new Legend({view: this.view});
-      const search = new Search({view: this.view});
-      this.basemapToggle = new BasemapToggle({view: this.view, nextBasemap: 'dark-gray-vector'});
-      const track = new Track({view: this.view});
+      const legend = new Legend({ view: this.view });
+      const search = new Search({ view: this.view });
+      const basemapToggle = new BasemapToggle({ view: this.view });
+      const track = new Track({ view: this.view });
 
-      legend.style = { type: 'card' }; // CSS leyenda tipo card
+      legend.style = { type: 'card', layout: 'side-by-side' }; // CSS leyenda tipo card
 
-      this.view.ui.add(legend, {position: 'bottom-left'});  // Muestra las convenciones del mapa
-      this.view.ui.add(search, {position: 'top-right'});    // Muestra el input de busqueda
-      this.view.ui.remove([this.basemapToggle, 'zoom']);    // Elimina los botones de zoom
-      // this.view.ui.add(this.basemapToggle, 'top-right'); // Muestra las opciones del mapa base
-      this.view.ui.add(track, 'top-right');                 // Muestra el boton de MyLocation
-      // this.view.ui.move([ 'zoom' ], 'top-right');        // Mover los botones de zoom a la izquierda
+      this.view.ui.add(legend, { position: 'bottom-left' });  // Muestra las convenciones del mapa
+      this.view.ui.add(search, { position: 'top-right' });    // Muestra el input de busqueda
+      this.view.ui.remove([basemapToggle, 'zoom']);           // Elimina los botones de zoom
+      this.view.ui.add(track, 'top-right');                   // Muestra el boton de MyLocation
 
       return this.view;
 
@@ -299,21 +294,11 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnInit() {
-    this.initializeMap();
+  loadSuiAnios() {
     this.suiService.getAnios().subscribe( anios => {
       this.suiAnios = anios;
       console.log(this.suiAnios);
       }, error => this.errorMessage = error
     );
-    const date = new Date();
-    // console.log(moment(date).format('YYYY-MM-DD'));
   }
-
-  ngOnDestroy() {
-    if (this.view) {
-      this.view.container = null; // destroy the map view
-    }
-  }
-
 }
