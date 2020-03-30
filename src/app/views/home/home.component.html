@@ -1,34 +1,28 @@
-<div class="contCarousel" style="z-index: 0;">
-    <mdb-carousel style="z-index: 0;" class="carousel slide carousel-fade" [animation]="'fade'">
-        <mdb-carousel-item style="z-index: 0;">
-            <div class="view w-100">
-                <img class="d-block w-100" src="../assets/img/image.jpg" alt="First slide">
-                <div class="mask rgba-black-light waves-light" mdbWavesEffect></div>
-            </div>
-            <div class="carousel-caption">
-                <h3 class="h3-responsive">Centro de Investigación y Análisis de Datos</h3>
-                <p>CIAD</p>
-            </div>
-        </mdb-carousel-item>
-        <mdb-carousel-item style="z-index: 0;">
-            <div class="view w-100">
-                <img class="d-block w-100" src="../assets/img/image1.jpg" alt="First slide">
-                <div class="mask rgba-black-light waves-light" mdbWavesEffect></div>
-            </div>
-            <div class="carousel-caption">
-                <h3 class="h3-responsive">Informática Forense</h3>
-                <p>CIAD</p>
-            </div>
-        </mdb-carousel-item>
-        <mdb-carousel-item style="z-index: 0;">
-            <div class="view w-100">
-                <img class="d-block w-100" src="../assets/img/image2.jpg" alt="Second slide">
-                <div class="mask rgba-black-strong waves-light" mdbWavesEffect></div>
-            </div>
-            <div class="carousel-caption">
-                <h3 class="h3-responsive">Desarrollo de software</h3>
-                <p>CIAD</p>
-            </div>
-        </mdb-carousel-item>
-    </mdb-carousel>
+<div class="carousel-animation-wrapper">
+    <div class="carousel-wrapper">
+        <igx-carousel #carousel [interval]="1000">
+            <igx-slide *ngFor="let slide of slides;">
+                <div class="slide-wrapper">
+                    <igx-card>
+                        <igx-card-header>
+                            <h4 igxCardHeaderTitle>{{slide.heading}}</h4>
+                        </igx-card-header>
+
+                        <igx-card-content>
+                            <p>{{slide.description}}</p>
+                        </igx-card-content>
+
+                        <igx-card-media>
+                            <img [src]="slide.image">
+                        </igx-card-media>
+
+
+                        <igx-card-actions>
+                            <a igxButton href="{{slide.link}}" target="_blank" style="text-decoration: none;">visit page</a>
+                        </igx-card-actions>
+                    </igx-card>
+                </div>
+            </igx-slide>
+        </igx-carousel>
+    </div>
 </div>

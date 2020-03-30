@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, NO_ERRORS_SCHEMA  } from '@angular/core';
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -39,11 +39,13 @@ import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { IgxCarouselModule, IgxIconModule, IgxSelectModule, IgxButtonModule, IgxCardModule } from 'igniteui-angular';
+// import { CarouselAnimationsSampleComponent } from './carousel-animations-sample/carousel-animations-sample.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    // CarouselAnimationsSampleComponent,
     MapComponent,
     MapOptionsComponent,
     TarifaritoComponent,
@@ -84,6 +86,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatInputModule,
     MatDatepickerModule,
     MatProgressSpinnerModule,
+    IgxCarouselModule,
+    IgxIconModule,
+    IgxSelectModule,
+    IgxButtonModule,
+    IgxCardModule,
     MDBBootstrapModule.forRoot()
   ],
   providers: [
@@ -91,7 +98,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     // {provide: MAT_BOTTOM_SHEET_DEFAULT_OPTIONS, useValue: {hasBackdrop: false}},
     MatIconRegistry
   ],
-  schemas: [ NO_ERRORS_SCHEMA ],
+  schemas: [NO_ERRORS_SCHEMA],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}
