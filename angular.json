@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "map-interrupciones": {
+        "ciad-platform": {
             "projectType": "application",
             "schematics": {
                 "@schematics/angular:component": {
@@ -17,7 +17,7 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "outputPath": "dist/map-interrupciones",
+                        "outputPath": "dist/ciad-platform",
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "polyfills": "src/polyfills.ts",
@@ -25,24 +25,12 @@
                         "aot": true,
                         "assets": [
                             "src/favicon.ico",
-                            "src/assets",
-                            {
-                                "glob": "**/*",
-                                "input": "node_modules/svg-country-flags/svg",
-                                "output": "assets/svg-country-flags/svg"
-                            }
+                            "src/assets"
                         ],
                         "styles": [
-                            "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-                            "node_modules/font-awesome/scss/font-awesome.scss",
-                            // "node_modules/angular-bootstrap-md/assets/scss/bootstrap/bootstrap.scss",
-                            // "node_modules/angular-bootstrap-md/assets/scss/mdb.scss",
                             "src/styles.scss"
                         ],
-                        "scripts": [
-                            "node_modules/chart.js/dist/Chart.js",
-                            "node_modules/hammerjs/hammer.min.js"
-                        ]
+                        "scripts": []
                     },
                     "configurations": {
                         "production": {
@@ -75,18 +63,18 @@
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
-                        "browserTarget": "map-interrupciones:build"
+                        "browserTarget": "ciad-platform:build"
                     },
                     "configurations": {
                         "production": {
-                            "browserTarget": "map-interrupciones:build:production"
+                            "browserTarget": "ciad-platform:build:production"
                         }
                     }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "map-interrupciones:build"
+                        "browserTarget": "ciad-platform:build"
                     }
                 },
                 "test": {
@@ -101,7 +89,6 @@
                             "src/assets"
                         ],
                         "styles": [
-                            "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
                             "src/styles.scss"
                         ],
                         "scripts": []
@@ -124,16 +111,16 @@
                     "builder": "@angular-devkit/build-angular:protractor",
                     "options": {
                         "protractorConfig": "e2e/protractor.conf.js",
-                        "devServerTarget": "map-interrupciones:serve"
+                        "devServerTarget": "ciad-platform:serve"
                     },
                     "configurations": {
                         "production": {
-                            "devServerTarget": "map-interrupciones:serve:production"
+                            "devServerTarget": "ciad-platform:serve:production"
                         }
                     }
                 }
             }
         }
     },
-    "defaultProject": "map-interrupciones"
+    "defaultProject": "ciad-platform"
 }
