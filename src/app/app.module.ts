@@ -39,13 +39,15 @@ import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { IgxCarouselModule, IgxIconModule, IgxSelectModule, IgxButtonModule, IgxCardModule } from 'igniteui-angular';
-// import { CarouselAnimationsSampleComponent } from './carousel-animations-sample/carousel-animations-sample.component';
+import {
+  IgxButtonModule, IgxCardModule, IgxCarouselModule,
+  IgxIconModule, IgxInputGroupModule, IgxLayoutModule,
+  IgxNavbarModule, IgxNavigationDrawerModule, IgxRippleModule, IgxSelectModule
+} from 'igniteui-angular';
 
 @NgModule({
   declarations: [
     AppComponent,
-    // CarouselAnimationsSampleComponent,
     MapComponent,
     MapOptionsComponent,
     TarifaritoComponent,
@@ -86,6 +88,8 @@ import { IgxCarouselModule, IgxIconModule, IgxSelectModule, IgxButtonModule, Igx
     MatInputModule,
     MatDatepickerModule,
     MatProgressSpinnerModule,
+    IgxInputGroupModule, IgxLayoutModule,
+    IgxNavbarModule, IgxNavigationDrawerModule, IgxRippleModule,
     IgxCarouselModule,
     IgxIconModule,
     IgxSelectModule,
